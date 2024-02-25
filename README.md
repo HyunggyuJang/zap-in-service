@@ -96,9 +96,23 @@ The current implementation of the Zap In Service is based on the following obser
         amountOut = numerator / denominator;
     }
   ```
+  The governing formula is the famous $x \times y = k$, where $x$ and $y$ are the reserve amounts of the input and output tokens, respectively, and $k$ is the product of the two reserve amounts. One twist is that Uniswap V2 applies a 0.3% fee to the input token amount, which is reflected in the `amountInWithFee` variable. The `getAmountOut` function calculates the exact output amount of the output token given the input amount and the reserve amounts of the input and output tokens, assuming underlying ERC20 tokens are not rebasing tokens.
+
 - Similarly, we can formulate the optimal ratio of the input token amount to the output token amount.
 
-  The relevant function, `calculateSwapInAmount` in the `Helper.sol` contract, is based on these observations and allows for a simple and efficient solution for liquidity providers to deposit a single token into a pool and receive Uniswap V2 LP tokens in return.
+  Let's assume $a_{io}$ is the original input token amount, i.e., the amount of the single token the user wants to deposit into the pool, $a_i$ is the input token amount to be swapped for the output token, and $a_o$ is the output token amount to be received. Then the optimal ratio of $a_{io} - a_i$ to $a_o$ is given by the following formula:
+  $$\frac{a_{io} - a_i}{a_o} = \frac{r_{in}}{r_{on}}$$
+  where $r_{in}$ and $r_{on}$ are the reserve amounts of the input and output tokens, after the input token amount $a_i$ is swapped for the output token.
+  
+  Note that $a_o$ can be expressed as a function of $a_i$ and $r_i$ and $r_o$, where $r_i$ and $r_o$ are the reserve amounts of the input and output tokens, respectively, before the input token amount $a_i$ is swapped for the output token, which are the known values. Also, $r_{in}$ and $r_{on}$ can be expressed as a function of $a_i$, $a_o$, $r_i$ and $r_o$ as follows:
+  $$r_{in} = r_i + a_i,\quad r_{on} = r_o - a_o$$
+
+  Therefore, we can solve the optimal ratio condition with respect to $a_i$, and it boils down to solving a quadratic equation:
+  $$c a_i^2 - (1 + c) r_i a_i - a_{io} r_i = 0$$
+  where $c$ is the fee-adjusted constant, i.e., $c = 997/1000$.
+  Since this form of quadratic equation has a unique positive solution, we can calculate $a_i$ solely based on $a_{io}$, $r_i$.
+  
+  In the code implementation, the relevant function is `calculateSwapInAmount` in the `Helper.sol` contract.
 
 A space for improvement is to implement the aforementioned Uniswap V3's Swap and Add functionality and compare the performance based on the estimated LP token amount in return from off-chain computation, such as from client-side front-end, and choose the better one.
 
