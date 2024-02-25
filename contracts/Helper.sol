@@ -22,6 +22,11 @@ contract Helper is ReentrancyGuardUpgradeable {
     /// @param tokensRec The amount of LP tokens received
     event ZapIn(address indexed sender, address indexed recipient, address indexed pool, uint256 tokensRec);
 
+    modifier ensure(uint256 deadline) {
+        require(deadline >= block.timestamp, "EXPIRED");
+        _;
+    }
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -44,7 +49,7 @@ contract Helper is ReentrancyGuardUpgradeable {
         uint256 singleAmount,
         address to,
         uint256 deadline
-    ) external {
+    ) external nonReentrant ensure(deadline) {
         require(address(pair) != address(0), "Invalid pair address");
         require(tokenA != address(0), "Invalid token address");
         require(singleAmount > 0, "Invalid amount");

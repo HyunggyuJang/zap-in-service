@@ -1,5 +1,11 @@
 {
-  "name": "hardhat-project",
+  "name": "zap-in",
+  "version": "0.1.0",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "hardhat test test/Helper.test.ts"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@openzeppelin/hardhat-upgrades": "^3.0.3",

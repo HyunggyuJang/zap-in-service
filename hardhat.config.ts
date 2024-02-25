@@ -3,6 +3,11 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-toolbox";
 
+const mainnetFork = {
+  url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+  blockNumber: parseInt(process.env.BLOCK_NUMBER ?? '0') || 19304000,
+}
+
 const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.20",
@@ -14,16 +19,15 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  typechain: {
-    outDir: 'types',
-  },
   networks: {
     hardhat: {
+      chainId: 1,
       allowUnlimitedContractSize: false,
+      forking: mainnetFork,
     },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
+  },
+  typechain: {
+    outDir: 'types',
   },
 };
 
