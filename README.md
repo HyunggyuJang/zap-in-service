@@ -65,10 +65,10 @@ You can run a local blockchain and deploy the smart contracts using Hardhat. To 
 
 ```sh
 npx hardhat node
-npm run deploy -- --network localhost
+npm run test -- --network localhost
 ```
 
-This will start a local blockchain and deploy the smart contracts to the network by running the deployment scripts.
+This will start a local blockchain and deploy the smart contracts to the network by running the test scripts.
 
 ## Design Notes
 
